@@ -1,4 +1,4 @@
-const AppError = require('../utils/appError');
+const AppError = require('./../utils/appError');
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -42,7 +42,7 @@ const sendErrorProd = (err, res) => {
     // Programming or other unknown error: don't leak error details
   } else {
     // 1) Log error
-    console.error('ERROR 💥', err);
+    // console.error('ERROR 💥', err);
 
     // 2) Send generic message
     res.status(500).json({
@@ -63,8 +63,11 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     // eslint-disable-next-line node/no-unsupported-features/es-syntax
     // eslint-disable-next-line node/no-unsupported-features/es-syntax
-    let error = { ...err };
+    // let error = { ...err };
     // console.log('error', error);
+    let error = JSON.stringify(err);
+
+    error = JSON.parse(error);
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError')
